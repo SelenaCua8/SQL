@@ -1,0 +1,139 @@
+---DATA CLEASING
+
+/*Funciones que pueden manejar valores nulos especificamente NVL() and Coalesce()
+
+Funciones que pueden limpiar valores especificamente Trim(), LPAD() and RPAD()*/
+
+---Expresion COALESCE(): COALESCE(EXPRESSION_1,EXPRESSION_2,EXPRESSION_N)
+
+---QUIERO UNA TABLA QUE ME DEVUELVA POR DEFECTO PRIMERO WEB ADRESS Y SI NO HAY QUE ME DEVUELVA STORE_NAME
+
+SELECT STORE_NAME, WEB_ADRESS, COALSCE(WEB_ADRESS, STORE_NAME)* FROM STORES;
+
+---NVL EXPRESSION: NVL(EXPRESSION, REPLACEMENT_STRING)
+/*SELECT NVL(nombre, 'Desconocido') FROM tabla_usuarios;
+
+En este caso, si el campo "nombre" es nulo en la tabla "tabla_usuarios", la función NVL() devolverá 'Desconocido'.
+ En cambio, si el campo "nombre" no es nulo, la función devolverá el valor del campo "nombre"*/
+
+/*Las funciones TRIM(), LPAD() y RPAD() son utilizadas en SQL para limpiar y formatear cadenas de texto.
+
+TRIM(): La función TRIM() se utiliza para eliminar los espacios en blanco al inicio y al final de una cadena de texto. 
+Su sintaxis es la siguiente:
+TRIM([LEADING | TRAILING | BOTH] caracteres FROM cadena)
+LEADING: elimina los caracteres especificados al inicio de la cadena.
+TRAILING: elimina los caracteres especificados al final de la cadena.
+BOTH: elimina los caracteres especificados tanto al inicio como al final de la cadena (es el valor por defecto si no se especifica).
+Ejemplo:
+SELECT TRIM(' Hola ') FROM tabla;
+El resultado sería: 'Hola'
+LPAD(): La función LPAD() se utiliza para rellenar una cadena de texto con caracteres específicos alineándolos a la izquierda.
+Su sintaxis es la siguiente:
+LPAD(cadena, longitud, [caracter_relleno])
+cadena: la cadena de texto a rellenar.
+longitud: la longitud final deseada de la cadena.
+caracter_relleno (opcional): el carácter utilizado para rellenar la cadena (el espacio en blanco es el valor por defecto si no se especifica).
+Ejemplo:
+SELECT LPAD('123', 6, '0') FROM tabla;
+El resultado sería: '000123'
+
+RPAD(): La función RPAD() se utiliza para rellenar una cadena de texto con caracteres específicos alineándolos a la derecha.
+ Su sintaxis es similar a la de LPAD():
+RPAD(cadena, longitud, [caracter_relleno])
+Ejemplo:
+SELECT RPAD('ABC', 5, '-') FROM tabla;
+El resultado sería: 'ABC--'
+Estas funciones son útiles para limpiar y formatear datos de cadenas de texto según tus necesidades en consultas SQL.
+*/
+
+/*Las funciones GREATEST() y LEAST() son utilizadas en SQL para encontrar el valor máximo y mínimo, respectivamente,
+ entre una lista de valores. 
+
+GREATEST(): La función GREATEST() devuelve el valor máximo de una lista de expresiones o columnas. 
+Su sintaxis es la siguiente:
+GREATEST(expresión1, expresión2, ... expresiónN)
+Ejemplo:
+SELECT GREATEST(10, 5, 8, 12) FROM tabla;
+El resultado sería: 12
+También puedes usar columnas en lugar de valores literales en la función GREATEST(). Por ejemplo:
+SELECT GREATEST(columna1, columna2, columna3) FROM tabla;
+Esta función es útil cuando deseas obtener el valor máximo entre diferentes columnas o expresiones.
+
+LEAST(): La función LEAST() devuelve el valor mínimo de una lista de expresiones o columnas.
+Su sintaxis es similar a la de GREATEST():
+LEAST(expresión1, expresión2, ... expresiónN)
+Ejemplo:
+SELECT LEAST(10, 5, 8, 12) FROM tabla;
+El resultado sería: 5
+
+Al igual que con GREATEST(), también puedes utilizar columnas en la función LEAST().
+SELECT LEAST(columna1, columna2, columna3) FROM tabla;
+Esta función es útil cuando deseas obtener el valor mínimo entre diferentes columnas o expresiones.
+
+Ambas funciones, GREATEST() y LEAST(), son útiles para realizar comparaciones y encontrar el valor máximo 
+o mínimo en una lista de valores en consultas SQL.
+Regenerate response*/
+
+
+
+---Data Manipulation
+
+/*PIVOT y UNPIVOT*/
+
+/*
+PIVOT: La función PIVOT se utiliza para transformar filas en columnas, creando una vista pivoteada de los datos. 
+Permite resumir y agrupar información en diferentes categorías.
+ Su sintaxis básica es la siguiente:
+SELECT columna1, [columna2, ...]
+FROM tabla_origen
+PIVOT (
+    función_agregada(columna_valor)
+    FOR columna_pivote
+    IN (valor1, valor2, ...)
+)
+columna1, [columna2, ...]: Las columnas que deseas seleccionar junto con la columna pivoteada.
+tabla_origen: La tabla de origen de los datos.
+función_agregada: La función agregada que deseas aplicar a la columna valor.
+columna_valor: La columna a la que se aplica la función agregada.
+columna_pivote: La columna que se utilizará como pivote para generar las nuevas columnas.
+(valor1, valor2, ...): Los valores únicos de la columna pivote.
+Ejemplo:
+SELECT *
+FROM ventas
+PIVOT (
+    SUM(total)
+    FOR producto
+    IN ('A', 'B', 'C')
+)
+Este ejemplo generará una vista pivoteada de la tabla "ventas", donde las columnas serán los productos 'A', 'B' y 'C', 
+y las filas contendrán la suma de los totales para cada producto.*/
+
+/*
+UNPIVOT: La función UNPIVOT se utiliza para convertir columnas en filas, deshaciendo la operación de pivote.
+ Permite volver a la estructura original de los datos.
+Su sintaxis básica es la siguiente:
+SELECT columna_pivote, columna_valor
+FROM tabla_origen
+UNPIVOT (
+    columna_valor
+    FOR columna_pivote
+    IN (columna1, columna2, ...)
+)
+columna_pivote: La columna que se utilizará como pivote para generar las nuevas filas.
+columna_valor: La columna que contiene los valores correspondientes a la columna pivote.
+tabla_origen: La tabla de origen de los datos.
+(columna1, columna2, ...): Las columnas que deseas des-pivotear.
+Ejemplo:
+SELECT columna_fecha, columna_producto, columna_valor
+FROM ventas_pivot
+UNPIVOT (
+    columna_valor
+    FOR columna_producto
+    IN (producto1, producto2, producto3)
+)
+Este ejemplo des-pivoteará la tabla "ventas_pivot", donde las columnas producto1, producto2 y producto3 
+se convertirán en filas, y las columnas columna_fecha y columna_valor mostrarán los datos correspondientes.
+
+Las funciones PIVOT y UNPIVOT son útiles para transformar la estructura de los datos y obtener una vista pivoteada o
+ des-pivotada según tus necesidades en consultas SQL.
+*/
