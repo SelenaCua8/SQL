@@ -1,0 +1,10 @@
+/*El código que has proporcionado es una consulta SQL que combina datos de dos tablas: "emp" (empleados) y "dept" (departamentos).
+La consulta utiliza la cláusula "JOIN" para unir las filas de ambas tablas según una condición específica. En este caso, la condición
+de unión es que el valor de la columna "depton" en la tabla "emp" sea igual al valor de la columna "depton" en la tabla "dept".
+El resultado de esta consulta es una combinación de filas de ambas tablas que cumplen la condición de unión.
+La sintaxis utilizada, "emp." y "dept.", indica que se seleccionarán todas las columnas de ambas tablas en el resultado de la consulta.
+Esto significa que se mostrarán todas las columnas y sus respectivos valores para las filas que cumplen la condición de unión.
+En resumen, el código realiza una consulta que muestra información detallada de los empleados y sus respectivos departamentos al combinar
+los datos de las dos tablas en base a la columna "depton".*/
+
+select emp.*, dept.* from emp join dept on emp.deptno = dept.deptno;
