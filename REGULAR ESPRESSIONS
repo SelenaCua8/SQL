@@ -1,0 +1,24 @@
+Oracle SQL admite el uso de expresiones regulares a través de las funciones y operadores proporcionados por la extensión de Oracle Database 
+para expresiones regulares. Estas funciones y operadores permiten realizar búsquedas y manipulaciones avanzadas de patrones de texto utilizando
+la sintaxis de expresiones regulares.
+
+Algunas de las funciones y operadores más comunes para trabajar con expresiones regulares en Oracle SQL son:
+
+REGEXP_LIKE: Esta función se utiliza para verificar si una cadena de texto cumple con un patrón de expresión regular especificado. 
+Devuelve un valor booleano (VERDADERO o FALSO) dependiendo si se encuentra una coincidencia o no.
+Ejemplo:
+SELECT * FROM empleados WHERE REGEXP_LIKE(nombre, '^A')
+Esto devolverá todos los registros de la tabla "empleados" donde el nombre comienza con la letra "A".
+
+REGEXP_SUBSTR: Esta función se utiliza para extraer una subcadena que cumple con un patrón de expresión regular de una cadena de texto. Devuelve la subcadena coincidente.
+Ejemplo:
+SELECT REGEXP_SUBSTR(cadena, '\d+') FROM tabla
+Esto extraerá la primera secuencia numérica (uno o más dígitos) de la columna "cadena" en la tabla especificada.
+
+REGEXP_REPLACE: Esta función se utiliza para reemplazar todas las ocurrencias de un patrón de expresión regular en una cadena de texto con un nuevo valor.
+Ejemplo:
+SELECT REGEXP_REPLACE(cadena, '\s+', ' ') FROM tabla
+Esto reemplazará todos los espacios en blanco consecutivos por un solo espacio en la columna "cadena" en la tabla especificada.
+
+Estos son solo algunos ejemplos de las funciones disponibles para trabajar con expresiones regulares en Oracle SQL. La capacidad de uso 
+y las opciones de las expresiones regulares en Oracle SQL son bastante amplias y versátiles, permitiendo realizar operaciones más complejas y detalladas en las consultas.
