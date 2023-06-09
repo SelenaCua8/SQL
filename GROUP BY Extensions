@@ -1,0 +1,59 @@
+GROUP BY es una cláusula utilizada en consultas de bases de datos para agrupar filas que comparten valores comunes en una o más columnas.
+Esto permite realizar operaciones de agregación, como SUM, COUNT, AVG, etc., en conjuntos de datos específicos.
+
+Existen varias extensiones del grupo GROUP BY que permiten una mayor flexibilidad en la generación de resultados agregados.
+A continuación, te explico las tres extensiones principales: ROLLUP, CUBE y GROUPING SETS.
+
+ROLLUP:
+ROLLUP es una extensión de GROUP BY que genera resultados agregados en múltiples niveles de resumen.
+Proporciona subtotales y totales generales para las combinaciones especificadas de columnas agrupadas.
+La sintaxis básica es la siguiente:
+SELECT column1, column2, ..., aggregate_function(column)
+FROM table
+GROUP BY ROLLUP (column1, column2, ...)
+Aquí, puedes especificar las columnas por las cuales deseas agrupar y obtener subtotales y totales generales para cada nivel de resumen.
+
+Ejemplo:
+Supongamos que tienes una tabla "Ventas" con las columnas "Producto", "Región" y "Año", y quieres obtener los totales de ventas por producto, región y año. Puedes usar ROLLUP para generar subtotales y totales generales de la siguiente manera:
+
+SELECT Producto, Región, Año, SUM(Ventas) AS TotalVentas
+FROM Ventas
+GROUP BY ROLLUP (Producto, Región, Año)
+Esto generará resultados que incluyen subtotales y totales generales para cada nivel de resumen, es decir, por producto, por región, por año y el total general.
+
+CUBE:
+CUBE es otra extensión de GROUP BY que genera todas las combinaciones posibles de agrupamiento. 
+Proporciona resultados agregados para todas las combinaciones de columnas agrupadas.
+La sintaxis básica es similar a ROLLUP:
+SELECT column1, column2, ..., aggregate_function(column)
+FROM table
+GROUP BY CUBE (column1, column2, ...)
+Aquí, al usar CUBE, obtendrás resultados agregados para todas las combinaciones posibles de columnas agrupadas.
+
+Ejemplo:
+Siguiendo el ejemplo anterior, si deseas obtener totales de ventas por producto, región y año, utilizando CUBE puedes obtener todas las combinaciones posibles:
+
+SELECT Producto, Región, Año, SUM(Ventas) AS TotalVentas
+FROM Ventas
+GROUP BY CUBE (Producto, Región, Año)
+Esto generará resultados que incluyen todas las combinaciones posibles de agrupamiento, proporcionando totales para cada combinación.
+
+GROUPING SETS:
+GROUPING SETS es otra extensión de GROUP BY que te permite especificar múltiples conjuntos de columnas para agrupar
+y obtener resultados agregados solo para esos conjuntos. Puedes pensar en ello como una forma de especificar múltiples cláusulas GROUP BY en una sola consulta.
+La sintaxis básica es la siguiente:
+SELECT column1, column2, ..., aggregate_function(column)
+FROM table
+GROUP BY GROUPING SETS ((column1, column2, ...), (column3, column4, ...), ...)
+Aquí, puedes especificar diferentes conjuntos de columnas agrupadas entre paréntesis.
+
+Ejemplo:
+Siguiendo el mismo ejemplo anterior, si deseas obtener totales de ventas por producto, región y año, pero
+también totales solo por producto y región sin tener en cuenta el año, puedes usar GROUPING SETS de la siguiente manera:
+SELECT Producto, Región, Año, SUM(Ventas) AS TotalVentas
+FROM Ventas
+GROUP BY GROUPING SETS ((Producto, Región, Año), (Producto, Región))
+Esto generará resultados que incluyen totales para las combinaciones (Producto, Región, Año) y (Producto, Región), sin tener en cuenta el año en el segundo conjunto.
+
+En resumen, ROLLUP, CUBE y GROUPING SETS son extensiones del grupo GROUP BY que proporcionan diferentes 
+formas de generar resultados agregados en consultas de bases de datos. Cada extensión ofrece diferentes niveles de resumen y flexibilidad en los resultados obtenidos.
