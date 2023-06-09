@@ -1,0 +1,152 @@
+WINDOW FRAME: realizan  querys basadas en un conjunto de registros.
+EJ: calcular el salario promedio de un grupo específico de registros de empleados
+ese grupo de registro es llamado WINDOW FRAME
+Conjunto de filas relacionadas con la fila actual donde se utiliza para el calculo
+También puede ser un conjunto diferente de filas para la siguiente fila del resultado de la consulta
+
+Una forma sencilla de crear un marco de ventana es mediante el uso de una cláusula con una subcláusula.
+En el siguiente ejemplo de SQL, generamos un informe de ingresos por marca del automóvil para el año 2021.OVERPARTITION BY
+
+SELECT make,
+       SUM(revenue) OVER (PARTITION BY make) AS total_revenue
+FROM   monthly_car_sales
+WHERE  year = 2021
+
+Ordenar las filas dentro de un window frame con ORDER BY:
+
+Además de , podemos usar una subcláusula para ordenar las filas dentro de un marco de ventana. Tener el marco de la ventana ordenado
+por algunos criterios nos permite utilizar funciones analíticas de ventana como , , y , entre otras.PARTITION BYORDER BYLEAD()LAG()FIRST_VALUE()
+
+Por ejemplo, si queremos obtener la diferencia de ingresos entre meses consecutivos, podemos ordenar el marco de la ventana por mes.
+Luego, dada cualquier fila actual, la función de ventana puede devolver cualquier columna del mes anterior. Veamos un ejemplo que 
+obtiene la diferencia de ingresos entre cada par de meses consecutivos.LAG()
+
+SELECT make,
+       model,
+       month,
+       revenue AS current_month_revenue,
+       LAG(revenue) OVER ( ORDER BY month) AS previous_month_revenue,
+     revenue - LAG (revenue) OVER (ORDER BY month) AS delta_revenue
+FROM monthly_car_sales
+WHERE year = 2021
+  AND model = 'Mustang
+  
+  Definición de límites de WINDOR FRAME con FILAS
+Una característica muy interesante de la cláusula es la capacidad de especificar los límites superior e inferior 
+de un marco de ventana. Estos límites se pueden especificar utilizando una de las dos subcláusulas de la cláusula:
+o . En esta sección, explicaremos cómo usar la subcláusula de la cláusula OVER.OVEROVERROWSRANGEROWS
+
+El marco de la ventana es un conjunto de filas que de alguna manera están relacionadas con la fila actual. 
+Sus límites se pueden definir para cada fila del resultado de la consulta con una subcláusula, que tiene la siguiente sintaxis:ROWS
+
+ROWS BETWEEN lower_bound AND upper_bound
+Como ya mencionamos en la sección anterior, es importante saber cuáles son los límites predeterminados del marco 
+de la ventana. Cuando especificamos una subcláusula, la fila actual es el límite superior del marco de la ventana de forma predeterminada. Sin embargo, en algunos casos, necesitamos cambiar este límite superior (o el límite inferior) como veremos a continuación.ORDER BY
+
+Veamos un ejemplo en el que necesitamos especificar los límites de un marco de ventana. Supongamos que queremos
+un informe con las ventas totales del mes actual, las ventas totales del mes anterior y las ventas máximas en
+cualquier mes individual durante todo el año, todo por marca y modelo. La consulta para obtener dicho informe es:
+
+SELECT make,
+       model,
+       month,
+       revenue AS current_month_revenue,
+       LAG(revenue) OVER (PARTITION BY make, model ORDER BY month) AS   
+                                                   prev_month,
+     MAX(revenue) OVER (PARTITION BY make, model ORDER BY month ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS max_year_revenue
+FROM monthly_car_sales
+WHERE year = 2021
+  
+Si hubiéramos omitido la subcláusula en la función de ventana en la consulta anterior, 
+habríamos obtenido el máximo entre el primer mes y el mes actual. Esto es incorrecto, ya que queremos
+el máximo de ingresos mensuales considerando todo el año (incluidos los meses posteriores al mes actual). 
+Por lo tanto, debemos incluir todos los meses disponibles en la tabla. Lo hacemos agregando la subcláusula a la cláusula.
+ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWINGMAX()ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWINGOVER
+
+Las opciones para los límites inferior y superior en la cláusula son:OVER
+
+UNBOUNDED PRECEDING
+N PRECEDING
+CURRENT ROW
+N FOLLOWING
+UNBOUNDED FOLLOWING
+
+Definición de límites de marco de ventana con RANGE
+
+En la sección anterior, definimos los límites de un marco de ventana en términos de .
+En esta sección, explicaremos cómo usar la subcláusula para especificar los límites de un marco
+de ventana en rangos de filas. La sintaxis de la subcláusula es la siguiente:ROWSRANGERANGE
+
+RANGE BETWEEN lower_bound AND upper_bound
+Un rango es un conjunto de filas con el mismo valor para los criterios. Por ejemplo, si tenemos un mes, 
+podemos ver la diferencia en la siguiente imagen cuando usamos o para definir un marco de ventana:PARTITION BYPARTITION BYROWSRANGE
+
+
+OVER ( PARTITION BY …... 
+
+             ORDER BY month 
+
+             ROWS BETWEEN 1 PRECEDING 
+
+             AND 1 FOLLOWING )
+             
+             
+             
+  OVER ( PARTITION BY ….. 
+
+             ORDER BY month 
+
+             RANGE BETWEEN 1 PRECEDING 
+
+             AND 1 FOLLOWING )
+             
+             
+ Si queremos un informe de ingresos por make para el mes actual y para cada uno de los últimos tres meses, podemos usar la siguiente consulta:
+
+SELECT make,
+       model,
+       month,
+     revenue AS model_revenue_current_month,
+       SUM(revenue) OVER ( PARTITION BY make
+                           ORDER BY month
+                           RANGE BETWEEN 0 PRECEDING AND CURRENT ROW
+                         ) AS make_current_month,
+     SUM(revenue) OVER (PARTITION BY make
+                           ORDER BY month
+                           RANGE BETWEEN 1 PRECEDING AND CURRENT ROW
+                        ) AS make_last_2_months,
+       SUM(revenue) OVER (PARTITION BY make
+                            ORDER BY month
+                            RANGE BETWEEN 2 PRECEDING AND CURRENT ROW
+                        ) AS make_last_3_months
+FROM monthly_car_sales
+WHERE year = 2021
+ORDER BY 1,3,2
+La consulta anterior utiliza la subcláusula para especificar un marco de ventana con todos 
+los registros de la marca actual para un intervalo de meses. Por ejemplo:RANGEN
+
+SUM(revenue) OVER (
+                   PARTITION BY make
+                   ORDER BY month
+                   RANGE BETWEEN 1 PRECEDING AND CURRENT ROW
+                  ) AS make_last_2_months
+La subcláusula anterior especifica un marco de ventana que incluye el mes anterior y el mes actual. Luego, la función devolverá los
+ingresos totales en los últimos dos meses.RANGE BETWEEN 1 PRECEDING AND CURRENT ROWSUM()
+
+Del mismo modo, podemos utilizar la siguiente cláusula para obtener los ingresos totales en los últimos tres meses.OVER
+
+SUM(revenue) OVER (
+                   PARTITION BY make
+                   ORDER BY month
+                   RANGE BETWEEN 2 PRECEDING AND CURRENT ROW
+                  ) AS make_last_3_months
+             
+             
+             
+             
+    
+
+
+
+  
+  
