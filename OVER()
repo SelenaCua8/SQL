@@ -1,0 +1,39 @@
+La función "OVER()" en SQL se utiliza para realizar cálculos y análisis avanzados en un conjunto de filas ordenadas dentro de una consulta. Proporciona una forma
+de acceder y operar en múltiples filas sin necesidad de realizar subconsultas o uniones complicadas.
+
+La función "OVER()" se combina con otras cláusulas como "PARTITION BY", "ORDER BY" y funciones de agregación como "SUM()", "AVG()", "COUNT()", entre otras.
+Estas cláusulas y funciones se utilizan en conjunto para definir la ventana o conjunto de filas sobre el cual se realizará el cálculo.
+
+La sintaxis básica de la función "OVER()" es la siguiente:
+
+<función de agregación>(<expresión>) OVER (PARTITION BY <columnas> ORDER BY <columnas>)
+Donde:
+<función de agregación>: es la función de agregación que se aplicará al conjunto de filas definido por la ventana.
+<expresión>: es la columna o expresión sobre la cual se realizará el cálculo.
+PARTITION BY: se utiliza para dividir el conjunto de filas en particiones o grupos según los valores de una o varias columnas. 
+Los cálculos se realizan por separado en cada partición.
+ORDER BY: se utiliza para ordenar las filas dentro de cada partición en un orden específico antes de aplicar la función de agregación.
+Aquí tienes un ejemplo para ilustrar el uso de la función "OVER()" en SQL:
+
+Supongamos que tenemos una tabla llamada "Ventas" con las columnas "Producto", "Fecha" y "Cantidad".
+Queremos calcular la suma acumulativa de las cantidades de productos por día.
+
+SELECT
+  Producto,
+  Fecha,
+  Cantidad,
+  SUM(Cantidad) OVER (PARTITION BY Fecha ORDER BY Fecha) AS SumaAcumulativa
+FROM
+  Ventas
+En este ejemplo, utilizamos la función "SUM()" como función de agregación y la función "OVER()" para definir la ventana. 
+La partición se realiza por la columna "Fecha", lo que significa que los cálculos se realizarán por separado para cada fecha. La cláusula "ORDER BY Fecha"
+ordena las filas dentro de cada partición por fecha. La columna adicional "SumaAcumulativa" mostrará la suma acumulativa de las cantidades de productos por día.
+
+
+
+SELECT CUSTOMERID AS IDCLIENTE, ORDERDATE FECHA, TOTALDUE COMPRA 
+SUM(TOTALDUE) OVER (PARTITION BY CUSTOMER_ID) AS TOTAL COMPRA FROM SALES.SALESORDERHEADER;
+
+
+
+
